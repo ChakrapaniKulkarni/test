@@ -1,0 +1,73 @@
+ES6:  http://es6-features.org/#Constants
+V8 is chromes engine
+
+https://github.com/v8/v8
+
+embed v8 in your library: https://developers.google.com/v8/embed
+V8 wiki https://github.com/v8/v8/wiki
+
+you can make v8 learn more commands
+https://nodeschool.io/#workshoppers
+
+Closure:
+
+A closure is an inner function that has access to the outer (enclosing) function’s variables—scope chain. 
+Export and require for code modularisation
+
+Socket.io
+Object literal
+Object literals are singleton
+Inheritance
+http://es6-features.org/#ClassDefinition
+
+Call site--> site with which the functions is called.
+by default node js parent object is document
+in case of browser it;s window
+Classical inheritance in other languages
+prototypical inheritance in jsvascript
+
+babel is a transpiler which converts ecma 6 to ecma 5 to run JS.
+thin client 
+to thick client
+webworkers is used for multithreading
+
+
+Design a game character:
+Character
+	-energy
+	-stamina
+	-power
+	-methods: 
+		run stamina-5
+		mtd	deplete energy -5
+		mtd	gain energy +5
+Hero inherit from character
+	-ppty special
+	mtd drink stamina+5
+	
+	Hero three instances scorpian, subzero,kaif
+
+Day-2
+
+Multiple inheritance is implemented by pass by reference
+IIFE potential 
+
+Apart from premitive elements everything in javascript is an object.
+.js/.json
+
+c++ core libuv
+.js lib folder
+
+Json javascript object notation
+data exchange format it doesn't store any functions
+
+passport-oauth2
+NPM
+Node package manager
+
+require uses file name if not is matched with folder
+
+No path for native modules
+
+https://nodejs.org/dist/latest-v8.x/docs/api/
+

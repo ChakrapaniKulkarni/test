@@ -1,0 +1,326 @@
+retention period =2 days , then will messag remain in topic after consumption
+partitioning
+consumer groups-- provide both capabilities of Queue and pub-sub
+Apache spark
+==============================
+JDK 1.8 Installed
+IntelliJ 2018.3 Installed
+
+Confluent Kafka 4.1.1 Enterprise version Works for 1 month
+Or 
+Use Kafka 4.1.1 OS free for commercial and open source projects
+
+
+MySQL V 5.7
+username: root
+password: root
+========================
+High Level Overview:
+
+AMQP -- Adavanced Message queuing protocol
+
+kafka doesnt follow AMQP , use connect API  to connect to different Apps.
+
+
+kafka developed on scala language
+
+metrics API- using which GuI can be created for Administration
+
+control center GUI is licensed - confluent
+
+rest proxy for Application not compatible with available drivers
+
+schema registry - for version control of topic
+
+ordering is by partition.
+
+can partition handle raouting rules?
+
+
+===========================================================
+
+Message:
+
+kafka broker is not master slave concept - All nodes can be leader - concept is based on partition.
+
+message is key value pair . hello will be stored as binary data , byte array.
+
+content based--same content is retrived at consumer.
+
+key is optional . same key dont mean duplicate message.
+
+=============================================================
+
+Topics:
+
+topics is a collection of data .
+
+==========================================
+Partition
+
+message mod number of brokers. hash key % number of partitions
+
+
+if Key is same all message is stored in single partition but can be directed to use round robin fashion across clucter.
+
+radius table to maintain exactly once processing
+
+index or offset is unique across files.
+
+when one file is full , ie used up allocated memory . new file is created
+
+=============================================
+
+replication factor:
+
+zookeper will decide which server to use for replication.4 partion and 2 replication factor . zookeepwr will decide where to keep replica based on environment factor.
+
+===============================================
+
+Zookeeper:
+
+leader: broker + partition 
+
+=========================
+
+Consumer:
+
+need not connect through zookeeper to fetch message
+
+rebalancig concept: 
+with help of zookeeper broker seelcts from different partitions. to give fare share too consumer.
+
+-each consumer group has to be part of a consumr group
+-consumer_offsets maintained by kafka to store offset at broker
+- topics can only be created in zookeeper
+-customer partitioner .java
+- provide bootstrap server list of all brokers available . it will pick data from the servers which are up. same for producer.
+- first messag reched any one broker and info will be fetched /metedata from zookeeper and ledaer , paertion are identified.
+-Idata serializer
+
+--compaction ?
+
+
+-- https://docs.confluent.io/current/streams
+====================
+
+http://code.nodesense.ai
+username: nodesense
+pass: bsol
+
+To start confluent,
+
+    confluent start
+
+List all topics
+
+    kafka-topics --zookeeper localhost:2181 --list
+
+Create a new topic
+
+    kafka-topics --create --topic test --zookeeper localhost:2181 --partitions 4 --replication-factor 1
+
+Produce messages using console
+
+    kafka-console-producer --broker-list localhost:9092 --topic test 
+
+
+    kafka-console-producer --broker-list localhost:9092 --topic test --property "parse.key=true" --property "key.separator=:"
+
+Write in this order    
+key1:value1
+key2:value2
+key3:value3
+
+Consume messages using console
+
+    kafka-console-consumer --bootstrap-server localhost:9092 --topic test --from-beginning
+      
+
+Delete a topic
+
+kafka-topics --zookeeper localhost:2181 --delete --topic test
+
+Alter Existing Topics
+ 
+kafka-topics --zookeeper localhost:2181 --alter --topic test --partitions 4
+
+kafka-topics --zookeeper localhost:2181 --topic order.oms --describe
+
+
+kafka-console-producer s
+
+cd confluent*.4.1.1
+
+ bin/kafka-server-start.sh etc/kafka/server1.properties
+
+    bin/kafka-server-start.sh etc/kafka/server2.properties
+
+
+kafka-topics --create --zookeeper localhost:2181 --replication-factor 3 --partitions 2 --topic repl-topic2
+kafka-topics --describe --zookeeper localhost:2181 --topic repl-topic2
+
+cluster consumer:
+
+    kafka-console-producer --broker-list localhost:9093 --topic repl-topic2
+kafka-console-consumer --bootstrap-server localhost:9094 --from-beginning --topic repl-topic2 
+kafka-console-consumer --bootstrap-server localhost:9092 --from-beginning --topic repl-topic2
+==================================================
+
+Broker:
+
+broker.id=0 , zooeeper identifies broker based on ID
+ssl settings, listener=PLAINTEXT://host:9092 - server.properties
+/tmp/kafka-logs2 $ ls  - check actual file which contains data , index,timestamp
+/tmp/kafka-logs2/repl-topic-0 $ dir - check actual file which contains data , index,timestamp
+
+cp etc/kafka/server.properties/
+
+creating cluster: copy server prop files and chnage broer ID , listener port, log name
+
+ISR- in sync replica - 
+
+
+Redis{ 
+
+M1,0,Failed
+
+
+}
+=========================
+
+
+java code: 
+AVRO folder to maintain schema
+--it is JSON format schema
+--plain text/ Binary
+--Avro tools google
+--run jarto create schema
+
+-----------------====================
+
+package ai.nodesense.simple;
+
+import org.apache.kafka.clients.consumer.*;
+import org.apache.kafka.common.PartitionInfo;
+import org.apache.kafka.common.TopicPartition;
+
+
+import org.apache.kafka.common.errors.WakeupException;
+import java.util.*;
+
+import java.util.Arrays;
+import java.util.Properties;
+
+public class RebalancedSimpleConsumer {
+    public static Properties getConfig(String group, String servers) {
+
+        Properties props = new Properties();
+        props.put("bootstrap.servers", servers);
+        props.put("group.id", group);
+
+        props.put("session.timeout.ms", "30000");
+        props.put("key.deserializer",
+                "org.apache.kafka.common.serialization.StringDeserializer");
+        props.put("value.deserializer",
+                "org.apache.kafka.common.serialization.StringDeserializer");
+
+        return props;
+    }
+
+    public static void rebalancedConsumer(String topic, String group, String servers) {
+
+        Properties props = getConfig(group, servers);
+
+        props.put("enable.auto.commit", "true");
+        props.put("auto.commit.interval.ms", "1000");
+
+
+        props.put(ConsumerConfig.CLIENT_ID_CONFIG, "client1234567");
+
+
+        long startingOffset = 0;
+
+        KafkaConsumer<String, String> consumer = new KafkaConsumer<String, String>(props);
+
+        //consumer.subscribe(Arrays.asList(topic));
+
+        List<PartitionInfo> partitions = consumer.partitionsFor(topic);
+        System.out.println("Partitions " + partitions);
+
+
+        consumer.subscribe(Arrays.asList(topic), new ConsumerRebalanceListener() {
+            public void onPartitionsRevoked(Collection<TopicPartition> partitions) {
+
+                System.out.printf("%s topic-partitions are revoked from this consumer\n", Arrays.toString(partitions.toArray()));
+            }
+            public void onPartitionsAssigned(Collection<TopicPartition> partitions) {
+                System.out.printf("%s topic-partitions are assigned to this consumer\n", Arrays.toString(partitions.toArray()));
+                Iterator<TopicPartition> topicPartitionIterator = partitions.iterator();
+                while(topicPartitionIterator.hasNext()){
+                    TopicPartition topicPartition = topicPartitionIterator.next();
+
+                    System.out.println("Current offset is " + consumer.position(topicPartition) + " committed offset is ->" + consumer.committed(topicPartition) );
+                    if(startingOffset == -2) {
+                        System.out.println("Leaving it alone");
+                    }else if(startingOffset ==0){
+                        System.out.println("Setting offset to begining");
+                        consumer.seekToBeginning(Arrays.asList(topicPartition));
+                    }else if(startingOffset == -1){
+                        System.out.println("Setting it to the end ");
+                        consumer.seekToEnd(Arrays.asList(topicPartition));
+                    }else {
+                        System.out.println("Resetting offset to " + startingOffset);
+                        consumer.seek(topicPartition, startingOffset);
+                    }
+                }
+            }
+        });
+
+        System.out.println("Subscribed to topic " + topic);
+
+
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(100);
+
+            if (records.count() > 0) {
+                System.out.println("Total Records " + records.count());
+            } else {
+                continue;
+            }
+
+            for (ConsumerRecord<String, String> record : records)
+                System.out.printf("partition =%d, offset = %d,  key = %s, value = %s\n",
+                        record.partition(),  record.offset(), record.key(), record.value());
+
+
+        }
+    }
+
+
+
+    public static void main(String[] args) throws Exception {
+        String topic = "test3";
+        String group = "simple2";
+        String servers = "localhost:9092";
+
+
+        rebalancedConsumer(topic, group, servers);
+
+
+
+
+
+
+    }
+}
+=======================================================================================
+
+
+Data stream ---> consumer -->stream Engine--> producer--> data Stream
+
+
+
+
+
+
