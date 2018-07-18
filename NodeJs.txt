@@ -89,9 +89,35 @@ npm init
 give package name
 npm start
 npm run-script start
-npm install moment-timezone --save
+npm install moment-timezone --save -->Will save dependency to package.json
 npm update will override all of it
 ^ for patch
 ~ for minor version
 1.5.1 -- major.minor.patch
 
+npm install moment-timezone --save-dev -->Will save dependency only for development 
+									environment and will not be included in the production build package.
+package-lock.json--> will freeze the version nmber of the application.
+npm install -g nodemon -->installs the package in the global repository and can be used in all the projects irrespective of your folder
+
+nodemon is for reloading node project without restarting the node server.
+
+npm list
+npm list -g --depth 0
+
+Sailjs is written on top of express
+meteor is famous
+
+npm install express --save
+
+
+Root 
+	node_modules
+	public
+	client
+	server
+https://expressjs.com/en/resources/middleware.html
+http://ejs.co/
+npm install ejs --save
+npm install body-parser
+https://expressjs.com/en/guide/routing.html
