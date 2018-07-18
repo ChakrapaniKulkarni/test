@@ -78,3 +78,20 @@ http://libuv.org/
 https://rxjs-dev.firebaseapp.com/
 
 https://github.com/getify/You-Dont-Know-JS/blob/master/up%20%26%20going/ch3.md
+
+GraphQl+NodeJS+mongo.
+
+https://aws.amazon.com/
+passportjs.org/
+axios
+https://semver.org/
+npm init
+give package name
+npm start
+npm run-script start
+npm install moment-timezone --save
+npm update will override all of it
+^ for patch
+~ for minor version
+1.5.1 -- major.minor.patch
+
