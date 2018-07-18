@@ -71,3 +71,10 @@ No path for native modules
 
 https://nodejs.org/dist/latest-v8.x/docs/api/
 
+https://frontendmasters.com/courses/javascript-foundations/
+https://frontendmasters.com/courses/ 
+https://frontendmasters.com/learn/angular/
+http://libuv.org/
+https://rxjs-dev.firebaseapp.com/
+
+https://github.com/getify/You-Dont-Know-JS/blob/master/up%20%26%20going/ch3.md
