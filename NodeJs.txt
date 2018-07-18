@@ -121,3 +121,10 @@ http://ejs.co/
 npm install ejs --save
 npm install body-parser
 https://expressjs.com/en/guide/routing.html
+https://www.npmjs.com/package/oracledb
+
+NodeJS+graphQL
+meteor is easy
+webpack
+
+GraphQl
